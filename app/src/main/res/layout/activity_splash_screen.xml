@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context="com.github.cooperj.newsbeautifier.activities.SplashScreenActivity">
+    tools:context="com.github.colinjeremie.newsbeautifier.activities.SplashScreenActivity">
 
     <ImageView
         android:id="@+id/logo"

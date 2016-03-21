@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.github.cooperj.newsbeautifier.activities.AboutActivity">
+    tools:context="com.github.colinjeremie.newsbeautifier.activities.AboutActivity">
 
     <ListView
         style="?android:attr/listViewStyle"

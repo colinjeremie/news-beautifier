@@ -29,4 +29,12 @@
     <string name="title_home_activity">Accueil</string>
     <string name="settings_about">A propos</string>
     <string name="settings_send_feedback">Commentaires</string>
+    <string name="dialog_add_rss_edittext_hint">Entrez une URL</string>
+    <string name="dialog_add_rss_title">Créer un nouveau flux</string>
+    <string name="url_cannot_be_empty">You devez entrer une URL valide</string>
+    <string name="error_an_error_hapenned_with_this_feed">Une erreur s\'est produite. Veuillez réessayer</string>
+    <string name="error_this_feed_already_exist">Erreur ce flux existe déjà !</string>
+    <string name="error_this_feed_cannot_be_added">Erreur ce flux ne peut pas être ajouté</string>
+    <string name="error_this_feed_is_not_a_valid_rss_feed">Erreur ce flux n\'est pas un flux RSS</string>
+    <string name="your_feed_has_been_added">Votre flux a été ajouté avec succès !</string>
 </resources>

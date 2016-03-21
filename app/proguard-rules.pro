@@ -21,7 +21,7 @@
   public *;
 }
 
--keep class com.github.cooperj.newsbeautifier.models.** { *; }
+-keep class com.github.colinjeremie.newsbeautifier.models.** { *; }
 -keep class com.raizlabs.android.dbflow.** { *; }
 -keep public class org.jsoup.** {
 public *;

@@ -57,4 +57,12 @@
     <string name="sort_title_desc">Title Z-A</string>
     <string name="sort_language">Language</string>
     <string name="sort_category">Category</string>
+    <string name="error_this_feed_already_exist">Error this feed already existst!</string>
+    <string name="error_this_feed_is_not_a_valid_rss_feed">Error this feed is not a valid RSS feed</string>
+    <string name="error_this_feed_cannot_be_added">Error this feed cannot be added</string>
+    <string name="error_an_error_hapenned_with_this_feed">Error something wrong happened. Try again</string>
+    <string name="dialog_add_rss_edittext_hint">Enter an URL</string>
+    <string name="dialog_add_rss_title">Create a new feed</string>
+    <string name="url_cannot_be_empty">You must enter a valid URL</string>
+    <string name="your_feed_has_been_added">Your feed has been added with success!</string>
 </resources>
