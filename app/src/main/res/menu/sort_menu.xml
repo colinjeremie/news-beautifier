@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/sort_date_asc"
-        android:title="@string/sort_date_new"/>
     <item android:id="@+id/sort_date_desc"
+        android:title="@string/sort_date_new"/>
+    <item android:id="@+id/sort_date_asc"
         android:title="@string/sort_date_old"/>
     <item android:id="@+id/sort_title_asc"
         android:title="@string/sort_title_asc"/>

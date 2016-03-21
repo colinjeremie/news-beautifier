@@ -12,7 +12,11 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.jsoup.Jsoup;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * * NewsBeautifier
@@ -38,6 +42,8 @@ public class RSSItem extends BaseModel implements Parcelable{
     public static final String PUBDATE_TAG = "published";
     public static final String PUBDATE_TAG2 = "pubDate";
 
+
+    static public final String FORMAT = "E',' d LLL yyyy k':'m':'s Z";
 
     @PrimaryKey
     @Column
@@ -72,6 +78,8 @@ public class RSSItem extends BaseModel implements Parcelable{
 
     @Column
     private String pubDate = "";
+
+    private Date pubDateFormat;
 
     public RSSItem() {
 
@@ -149,11 +157,11 @@ public class RSSItem extends BaseModel implements Parcelable{
 
     public void setPubDate(String pPubdate) {
         pubDate = pPubdate;
-        if (pubDate != null && pubDate.contains("+")){
-            int idx = pubDate.lastIndexOf('+');
-            if (idx > 0){
-                pubDate = pubDate.substring(0, idx);
-            }
+        SimpleDateFormat sdf = new SimpleDateFormat(FORMAT, Locale.US);
+        try {
+            pubDateFormat = sdf.parse(pubDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -204,6 +212,22 @@ public class RSSItem extends BaseModel implements Parcelable{
         this.image = image;
     }
 
+    public Date getPubDateFormat() {
+        if (pubDateFormat == null){
+            SimpleDateFormat sdf = new SimpleDateFormat(FORMAT, Locale.US);
+            try {
+                pubDateFormat = sdf.parse(pubDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return pubDateFormat;
+    }
+
+    public void setPubDateFormat(Date pubdateformat) {
+        pubDateFormat = pubdateformat;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -232,6 +256,9 @@ public class RSSItem extends BaseModel implements Parcelable{
     public static final class DateComparatorAsc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
+            if (o1.pubDateFormat != null && o2.pubDateFormat != null){
+                return o1.pubDateFormat.compareTo(o2.pubDateFormat);
+            }
             return o1.getPubDate().compareTo(o2.getPubDate());
         }
     }
@@ -240,6 +267,9 @@ public class RSSItem extends BaseModel implements Parcelable{
     public static final class DateComparatorDesc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
+            if (o1.pubDateFormat != null && o2.pubDateFormat != null){
+                return o1.pubDateFormat.compareTo(o2.pubDateFormat) * -1;
+            }
             return o1.getPubDate().compareTo(o2.getPubDate()) * -1;
         }
     }

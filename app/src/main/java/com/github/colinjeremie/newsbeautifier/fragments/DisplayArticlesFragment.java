@@ -41,9 +41,11 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         SwipeRefreshLayout.OnRefreshListener,
         PopupMenu.OnMenuItemClickListener {
 
-    public static final String FEED_URL = "FEED_URL";
-    public static final String FEED_USER_ID = "FEED_USER_ID";
-    public static final String ARTICLES = "ARTICLES";
+    static public final String SEARCH_TEXT = "SEARCH_TEXT";
+
+    static public final String FEED_URL = "FEED_URL";
+    static public final String FEED_USER_ID = "FEED_USER_ID";
+    static public final String ARTICLES = "ARTICLES";
 
     private RecyclerView mRecyclerView;
     private StaggeredRecyclerViewAdapter mAdapter;
@@ -51,6 +53,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
     private String mFeedUrl;
     private Long mFeedUserId;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private String textSearched;
 
     public DisplayArticlesFragment() {
     }
@@ -78,9 +81,20 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.colorAccent));
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
+        if (savedInstanceState != null){
+            textSearched = savedInstanceState.getString(SEARCH_TEXT, null);
+        }
         setHasOptionsMenu(true);
 
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (textSearched != null){
+            outState.putString(SEARCH_TEXT, textSearched);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -90,6 +104,10 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
+        if (textSearched != null && !textSearched.isEmpty()){
+            item.expandActionView();
+            searchView.setQuery(textSearched, false);
+        }
     }
 
     @Override
@@ -99,6 +117,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        textSearched = newText;
         final List<RSSItem> filteredModelList = filter(mArticleList, newText);
         mAdapter.animateTo(filteredModelList);
         mRecyclerView.scrollToPosition(0);
