@@ -8,8 +8,4 @@
         android:title="@string/sort_title_asc"/>
     <item android:id="@+id/sort_title_desc"
         android:title="@string/sort_title_desc"/>
-    <item android:id="@+id/sort_language"
-        android:title="@string/sort_language"/>
-    <item android:id="@+id/sort_category"
-        android:title="@string/sort_category"/>
 </menu>

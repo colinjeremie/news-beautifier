@@ -105,8 +105,9 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setOnQueryTextListener(this);
         if (textSearched != null && !textSearched.isEmpty()){
+            String tmp = textSearched;
             item.expandActionView();
-            searchView.setQuery(textSearched, false);
+            searchView.setQuery(tmp, true);
         }
     }
 
@@ -229,16 +230,18 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
     }
 
     public void showPopup(int id) {
-        PopupMenu popup = new PopupMenu(this.getActivity(), this.getActivity().findViewById(id));
-        popup.setOnMenuItemClickListener(this);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.sort_menu, popup.getMenu());
-        popup.show();
+        View view = this.getActivity().findViewById(id);
+        if (view != null) {
+            PopupMenu popup = new PopupMenu(getActivity(), view);
+            popup.setOnMenuItemClickListener(this);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.sort_menu, popup.getMenu());
+            popup.show();
+        }
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.sort_date_asc:
                 sortList(new RSSItem.DateComparatorAsc());
@@ -252,17 +255,11 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
             case R.id.sort_title_desc:
                 sortList(new RSSItem.TitleComparatorDesc());
                 return true;
-            case R.id.sort_language:
-                sortList(new RSSItem.LanguageComparator());
-                return true;
-            case R.id.sort_category:
-                sortList(new RSSItem.CategoryComparator());
-                return true;
         }
         return false;
     }
 
-    private void sortList(Comparator comparator){
+    private void sortList(Comparator<RSSItem> comparator){
         Collections.sort(mAdapter.getitemList(), comparator);
         mAdapter.notifyDataSetChanged();
     }
