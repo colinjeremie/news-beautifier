@@ -23,10 +23,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("../keystore/releasekey.jks")
-            storePassword "P9G!'%Dfk(/#"
-            keyAlias "news_beautifier"
-            keyPassword "P9G!'%Dfk(/#"
+            storeFile file("../keystore/myreleasekey.jks")
+            storePassword "qV3/d_yW5{Nm+sP5"
+            keyAlias "releasekey"
+            keyPassword "qV3/d_yW5{Nm+sP5"
         }
     }
 
