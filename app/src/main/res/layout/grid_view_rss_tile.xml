@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,64 +8,62 @@
     card_view:cardUseCompatPadding="true"
     card_view:cardCornerRadius="2dp"
     android:layout_marginBottom="16dp">
-    <com.github.colinjeremie.newsbeautifier.views.GridItemRelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/rssImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitCenter" />
-
-        <View
-            android:id="@+id/rssStateFilter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"
-            android:background="@color/tileDark" />
-
-        <RelativeLayout
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_margin="5dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/layout_round_grid_icon"
-            android:translationZ="1dp">
-
-            <ImageView
-                android:id="@+id/stateIcon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_done_white_24dp"/>
-        </RelativeLayout>
+            android:id="@+id/feed_image"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/rss"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/rssImage" />
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:orientation="vertical"
+            android:background="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/tileDark"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentEnd="false"
-            android:padding="5dp"
-            android:translationZ="1dp">
+            android:minHeight="100dp"
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/feed_title"
+                android:layout_width="match_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="24dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="Title"
+                android:layout_marginBottom="8dp"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/feed_description"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/feedTitleTextView"
                 android:textSize="12sp"
-                android:textColor="@android:color/white"
-                android:layout_marginLeft="5dp"
+                android:text="Description"
                 android:maxLines="2"
                 android:lines="2"
-                android:minLines="2" />
+                android:textColor="#484848"/>
+            <Button
+                android:id="@+id/cardview_action"
 
+                android:background="?attr/selectableItemBackground"
+                android:textSize="13sp"
+                android:textColor="@color/cardview_subscribe_color"
+                android:text="@string/feed_subscribe"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
-
-    </com.github.colinjeremie.newsbeautifier.views.GridItemRelativeLayout>
-
+    </LinearLayout>
 </android.support.v7.widget.CardView>

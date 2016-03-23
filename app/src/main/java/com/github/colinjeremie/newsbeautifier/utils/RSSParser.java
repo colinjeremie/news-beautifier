@@ -216,7 +216,7 @@ public class RSSParser {
         return null;
     }
 
-    private String readMediaThumbNail(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private String readMediaThumbNail(XmlPullParser parser) {
         return parser.getAttributeValue(null, "url");
     }
 

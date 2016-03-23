@@ -31,6 +31,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FeedSelectFragment extends Fragment {
@@ -53,7 +55,19 @@ public class FeedSelectFragment extends Fragment {
         mRssList = new Select()
                 .from(RSSFeed.class).queryList();
 
-        mRssGridAdapter = new RssGridAdapter(getActivity(), R.layout.grid_view_rss_tile, mRssList);
+        Collections.sort(mRssList, new Comparator<RSSFeed>() {
+            @Override
+            public int compare(RSSFeed lhs, RSSFeed rhs) {
+                if (lhs.getUserId() == null && rhs.getUserId() != null){
+                    return -1;
+                } else if (lhs.getUserId() != null && rhs.getUserId() == null){
+                    return 1;
+                }
+                return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
+            }
+        });
+
+        mRssGridAdapter = new RssGridAdapter(getActivity(), mRssList);
         rssGridView.setAdapter(mRssGridAdapter);
 
         inflatedView.findViewById(R.id.btn_add_rss_action).setOnClickListener(new View.OnClickListener() {

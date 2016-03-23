@@ -2,12 +2,14 @@ package com.github.colinjeremie.newsbeautifier.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
+ ** NewsBeautifier
  * Created by james_000 on 3/10/2016.
  */
-public class GridItemRelativeLayout extends RelativeLayout {
+public class GridItemRelativeLayout extends LinearLayout {
     public GridItemRelativeLayout(Context context) {
         super(context);
     }

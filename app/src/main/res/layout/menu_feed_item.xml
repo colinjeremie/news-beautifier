@@ -2,4 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/drawer_item"
     android:text="test"
+    android:paddingEnd="16dp"
+    android:paddingRight="16dp"
+    android:paddingStart="16dp"
     android:paddingLeft="16dp"/>

@@ -65,4 +65,7 @@
     <string name="dialog_add_rss_title">Create a new feed</string>
     <string name="url_cannot_be_empty">You must enter a valid URL</string>
     <string name="your_feed_has_been_added">Your feed has been added with success!</string>
+    <string name="rssImage">rss image</string>
+    <string name="feed_subscribe">SUBSCRIBE</string>
+    <string name="feed_unsubscribe">UNSUBSCRIBE</string>
 </resources>

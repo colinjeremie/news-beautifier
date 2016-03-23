@@ -3,12 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="cardview_subscribe_color">#6270C1</color>
+    <color name="cardview_unsubscribe_color">#FF4081</color>
     <color name="drawer_subtitle_color">#89000000</color>
     <color name="drawer_default_item_color">#DD000000</color>
     <color name="background_header_color">#33000000</color>
 
-    <color name="tileLight">#00000000</color>
-    <color name="tileDark">#40000000</color>
-    <color name="tileDarkBorder">#50000000</color>
     <color name="widget_title_article_item_background">#CC000000</color>
 </resources>

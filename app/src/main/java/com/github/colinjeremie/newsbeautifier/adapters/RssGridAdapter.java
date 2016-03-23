@@ -2,6 +2,7 @@ package com.github.colinjeremie.newsbeautifier.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +29,12 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
 
     private User mUser;
     private Activity mActivity;
-    private int mLayoutResourceId;
 
-    public RssGridAdapter(Activity activity, int layoutResourceId, List<RSSFeed> rssList){
-        super(activity, layoutResourceId, rssList);
+    public RssGridAdapter(Activity activity, List<RSSFeed> rssList){
+        super(activity, R.layout.grid_view_rss_tile, rssList);
 
         mActivity = activity;
         mUser = ((MyApplication)mActivity.getApplication()).mUser;
-        mLayoutResourceId = layoutResourceId;
     }
 
     @Override
@@ -46,41 +45,49 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        RSSFeed feed = getItem(position);
+
         if (convertView == null) {
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) mActivity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(mLayoutResourceId, parent, false);
-            holder.rssName = (TextView) convertView.findViewById(R.id.feedTitleTextView);
-            holder.rssImage = (ImageView) convertView.findViewById(R.id.rssImage);
-            holder.stateIcon = (ImageView) convertView.findViewById(R.id.stateIcon);
-            holder.filter = convertView.findViewById(R.id.rssStateFilter);
+            convertView = inflater.inflate(R.layout.grid_view_rss_tile, parent, false);
+            holder.feedTitle = (TextView) convertView.findViewById(R.id.feed_title);
+            holder.feedDescription = (TextView) convertView.findViewById(R.id.feed_description);
+            holder.feedImage = (ImageView) convertView.findViewById(R.id.feed_image);
+            holder.actionTextView = (TextView) convertView.findViewById(R.id.cardview_action);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        convertView.setOnClickListener(new OnRssFeedClick(holder));
+        if (feed.getImage() == null) {
+            holder.feedImage.setImageResource(R.drawable.rss);
+        } else {
+            Glide.with(mActivity).load(feed.getImage()).into(holder.feedImage);
+        }
         holder.pos = position;
-        RSSFeed feed = getItem(position);
-        if (feed.getImage() == null)
-                holder.rssImage.setImageResource(R.drawable.rss);
-        else
-            Glide.with(mActivity).load(feed.getImage()).into(holder.rssImage);
-        holder.rssName.setText(feed.getTitle());
-        holder.stateIcon.setVisibility(feed.getUserId() == mUser.getId() ? View.VISIBLE : View.GONE);
-        holder.filter.setVisibility(feed.getUserId() == mUser.getId() ? View.INVISIBLE : View.VISIBLE);
+        holder.feedTitle.setText(feed.getTitle());
+        holder.feedDescription.setText(feed.getDescription());
+        holder.actionTextView.setOnClickListener(new OnRssFeedClick(holder));
 
-        convertView.setOnClickListener(new OnRssFeedClick(holder));
+        if (feed.getUserId() == null){
+            holder.actionTextView.setText(convertView.getContext().getString(R.string.feed_subscribe));
+            holder.actionTextView.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.cardview_subscribe_color));
+        } else {
+            holder.actionTextView.setText(convertView.getContext().getString(R.string.feed_unsubscribe));
+            holder.actionTextView.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.cardview_unsubscribe_color));
+        }
+
         return convertView;
     }
 
     private static class ViewHolder {
         public int pos;
-        public ImageView rssImage;
-        public ImageView stateIcon;
-        public View filter;
-        public TextView rssName;
+        public ImageView feedImage;
+        public TextView feedTitle;
+        public TextView feedDescription;
+        public TextView actionTextView;
     }
 
     private class OnRssFeedClick implements View.OnClickListener {
@@ -92,53 +99,16 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         @Override
         public void onClick(View v) {
             RSSFeed feed = getItem(mViewHolder.pos);
-            if (mViewHolder.stateIcon.getVisibility() == View.GONE) {
+            if (feed.getUserId() == null){
                 mUser.addFeed(feed);
                 feed.setUserId(mUser.getId());
-
-                mViewHolder.stateIcon.setVisibility(View.VISIBLE);
-                AlphaAnimation fadeIn = new AlphaAnimation(1.0f, 0.0f);
-                fadeIn.setDuration(1000);
-                fadeIn.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        mViewHolder.filter.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                mViewHolder.filter.startAnimation(fadeIn);
+                mViewHolder.actionTextView.setText(v.getContext().getString(R.string.feed_unsubscribe));
+                mViewHolder.actionTextView.setTextColor(ContextCompat.getColor(v.getContext(), R.color.cardview_unsubscribe_color));
             } else {
                 feed.setUserId(null);
                 mUser.removeFeed(feed);
-                mViewHolder.stateIcon.setVisibility(View.GONE);
-                AlphaAnimation fadeOut = new AlphaAnimation(0.0f, 1.0f);
-                fadeOut.setDuration(1000);
-                fadeOut.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        mViewHolder.filter.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                mViewHolder.filter.startAnimation(fadeOut);
+                mViewHolder.actionTextView.setText(v.getContext().getString(R.string.feed_subscribe));
+                mViewHolder.actionTextView.setTextColor(ContextCompat.getColor(v.getContext(), R.color.cardview_subscribe_color));
             }
             feed.update();
 
