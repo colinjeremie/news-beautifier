@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rss_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardCornerRadius="2dp"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:minHeight="125dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/feed_title"
+            android:layout_width="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="24dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Title"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/feed_description"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:text="Description"
+            android:maxLines="2"
+            android:lines="2"
+            android:textColor="#484848"/>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/feed_nb_articles"
+
+                android:textColor="#A0A0A0"
+                android:text="10 articles"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/cardview_action"
+
+                android:background="?attr/selectableItemBackground"
+                android:layout_margin="8dp"
+                android:drawableLeft="@drawable/ic_rss_feed_black_24dp"
+                android:textSize="13sp"
+                android:textColor="@color/cardview_subscribe_color"
+                android:text="@string/feed_subscribe"
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

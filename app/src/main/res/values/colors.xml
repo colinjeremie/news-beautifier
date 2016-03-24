@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="cardview_subscribe_color">#6270C1</color>
     <color name="cardview_unsubscribe_color">#FF4081</color>
+
     <color name="drawer_subtitle_color">#89000000</color>
     <color name="drawer_default_item_color">#DD000000</color>
     <color name="background_header_color">#33000000</color>

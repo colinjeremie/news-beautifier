@@ -2,12 +2,13 @@ package com.github.colinjeremie.newsbeautifier.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
     private Activity mActivity;
 
     public RssGridAdapter(Activity activity, List<RSSFeed> rssList){
-        super(activity, R.layout.grid_view_rss_tile, rssList);
+        super(activity, R.layout.grid_feed_item, rssList);
 
         mActivity = activity;
         mUser = ((MyApplication)mActivity.getApplication()).mUser;
@@ -51,43 +52,51 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) mActivity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.grid_view_rss_tile, parent, false);
+            convertView = inflater.inflate(R.layout.grid_feed_item, parent, false);
             holder.feedTitle = (TextView) convertView.findViewById(R.id.feed_title);
             holder.feedDescription = (TextView) convertView.findViewById(R.id.feed_description);
-            holder.feedImage = (ImageView) convertView.findViewById(R.id.feed_image);
             holder.actionTextView = (TextView) convertView.findViewById(R.id.cardview_action);
+            holder.countArticles = (TextView) convertView.findViewById(R.id.feed_nb_articles);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
 
-        if (feed.getImage() == null) {
-            holder.feedImage.setImageResource(R.drawable.rss);
-        } else {
-            Glide.with(mActivity).load(feed.getImage()).into(holder.feedImage);
-        }
         holder.pos = position;
         holder.feedTitle.setText(feed.getTitle());
         holder.feedDescription.setText(feed.getDescription());
+
+        int nb = feed.getItems().size();
+        holder.countArticles.setText(convertView.getContext().getResources().getQuantityString(R.plurals.feed_nb_articles, nb, nb));
         holder.actionTextView.setOnClickListener(new OnRssFeedClick(holder));
 
         if (feed.getUserId() == null){
             holder.actionTextView.setText(convertView.getContext().getString(R.string.feed_subscribe));
-            holder.actionTextView.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.cardview_subscribe_color));
+            tintActionTextView(holder.actionTextView, R.color.cardview_subscribe_color);
         } else {
             holder.actionTextView.setText(convertView.getContext().getString(R.string.feed_unsubscribe));
-            holder.actionTextView.setTextColor(ContextCompat.getColor(convertView.getContext(), R.color.cardview_unsubscribe_color));
+            tintActionTextView(holder.actionTextView, R.color.cardview_unsubscribe_color);
         }
 
         return convertView;
     }
 
+    private void tintActionTextView(TextView textView, int colorRes){
+        textView.setTextColor(ContextCompat.getColor(textView.getContext(), colorRes));
+        for (Drawable tmp : textView.getCompoundDrawables()){
+            if (tmp != null){
+                DrawableCompat.setTint(tmp, ContextCompat.getColor(textView.getContext(), colorRes));
+            }
+        }
+        textView.requestLayout();
+    }
+
     private static class ViewHolder {
         public int pos;
-        public ImageView feedImage;
         public TextView feedTitle;
         public TextView feedDescription;
         public TextView actionTextView;
+        public TextView countArticles;
     }
 
     private class OnRssFeedClick implements View.OnClickListener {
@@ -103,12 +112,12 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
                 mUser.addFeed(feed);
                 feed.setUserId(mUser.getId());
                 mViewHolder.actionTextView.setText(v.getContext().getString(R.string.feed_unsubscribe));
-                mViewHolder.actionTextView.setTextColor(ContextCompat.getColor(v.getContext(), R.color.cardview_unsubscribe_color));
+                tintActionTextView(mViewHolder.actionTextView, R.color.cardview_unsubscribe_color);
             } else {
                 feed.setUserId(null);
                 mUser.removeFeed(feed);
                 mViewHolder.actionTextView.setText(v.getContext().getString(R.string.feed_subscribe));
-                mViewHolder.actionTextView.setTextColor(ContextCompat.getColor(v.getContext(), R.color.cardview_subscribe_color));
+                tintActionTextView(mViewHolder.actionTextView, R.color.cardview_subscribe_color);
             }
             feed.update();
 

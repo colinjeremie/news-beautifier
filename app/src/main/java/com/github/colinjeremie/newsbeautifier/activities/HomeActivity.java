@@ -68,10 +68,13 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
 
         initMyFeeds();
 
-        restoreState(savedInstanceState);
+        if (savedInstanceState == null){
+            selectHeaderItem(0, true);
+        }
     }
 
-    private void restoreState(Bundle savedInstanceState){
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         int position = 0;
         int type = HEADER_TYPE;
 
@@ -80,19 +83,23 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
             type = savedInstanceState.getInt(LIST_TYPE);
         }
         if (type == HEADER_TYPE){
-            selectHeaderItem(position);
+            selectHeaderItem(position, false);
         } else {
-            selectFeed(position);
+            selectFeed(position, false);
         }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mHeaderList.getSelectedItemPosition() != AdapterView.INVALID_POSITION){
-            outState.putInt(POSITION, mHeaderList.getSelectedItemPosition());
+        int headerPos = mHeaderList.getCheckedItemPosition();
+        int feedPos = mFeedListView.getCheckedItemPosition();
+
+        if (headerPos != AdapterView.INVALID_POSITION){
+            outState.putInt(POSITION, headerPos);
             outState.putInt(LIST_TYPE, HEADER_TYPE);
-        } else if (mFeedListView.getSelectedItemPosition() != AdapterView.INVALID_POSITION){
-            outState.putInt(POSITION, mFeedListView.getSelectedItemPosition());
+        } else if (feedPos != AdapterView.INVALID_POSITION){
+            outState.putInt(POSITION, feedPos);
             outState.putInt(LIST_TYPE, FEED_TYPE);
         }
         super.onSaveInstanceState(outState);
@@ -127,33 +134,34 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         mFeedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectFeed(position);
+                selectFeed(position, true);
             }
         });
     }
 
-    private void selectFeed(int position) {
-        if (position != mFeedListView.getSelectedItemPosition()) {
+    private void selectFeed(int position, boolean mustInstantiateFragment) {
+        if (position >= 0 && position < mFeedAdapter.getCount()) {
             RSSFeed feed = mFeedAdapter.getItem(position);
+            if (position != mFeedListView.getSelectedItemPosition() && mustInstantiateFragment) {
+                ArrayList<RSSItem> articles = new ArrayList<>();
+                articles.addAll(feed.getItems());
+
+                DisplayArticlesFragment fragment = new DisplayArticlesFragment();
+                Bundle bundle = new Bundle();
+
+                bundle.putString(DisplayArticlesFragment.FEED_URL, feed.getUrl());
+                bundle.putLong(DisplayArticlesFragment.FEED_USER_ID, feed.getUserId());
+                bundle.putParcelableArrayList(DisplayArticlesFragment.ARTICLES, articles);
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
+            }
             mHeaderList.clearChoices();
             mHeaderList.requestLayout();
             mFeedListView.setItemChecked(position, true);
-
-            ArrayList<RSSItem> articles = new ArrayList<>();
-            articles.addAll(feed.getItems());
-
-            DisplayArticlesFragment fragment = new DisplayArticlesFragment();
-            Bundle bundle = new Bundle();
-
-            bundle.putString(DisplayArticlesFragment.FEED_URL, feed.getUrl());
-            bundle.putLong(DisplayArticlesFragment.FEED_USER_ID, feed.getUserId());
-            bundle.putParcelableArrayList(DisplayArticlesFragment.ARTICLES, articles);
-            fragment.setArguments(bundle);
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .commit();
 
             setTitle(feed.toString());
         }
@@ -174,27 +182,28 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
 
     @Override
     public void onMyFeedsChanged() {
-            mFeedAdapter.notifyDataSetChanged();
+        mFeedAdapter.notifyDataSetChanged();
     }
 
     private class HeaderItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectHeaderItem(position);
+            selectHeaderItem(position, true);
         }
     }
 
     /** Swaps fragments in the main content view */
-    private void selectHeaderItem(int position) {
-        if (position != mHeaderList.getSelectedItemPosition()) {
-            Fragment fragment = null;
+    private void selectHeaderItem(int position, boolean mustInstantiateFragment) {
+        if (position >= 0 &&
+                position != mHeaderList.getSelectedItemPosition() && mustInstantiateFragment) {
+            Fragment fragment;
 
             if (position == 0) {
                 fragment = new DisplayArticlesFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(DisplayArticlesFragment.ARTICLES, getAllArticles());
                 fragment.setArguments(bundle);
-            } else if (position == 1) {
+            } else {
                 fragment = new FeedSelectFragment();
             }
 
@@ -204,16 +213,16 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
                     .replace(R.id.content_frame, fragment)
                     .commit();
 
-            // Highlight the selected item, update the title, and close the drawer
-            mHeaderList.setItemChecked(position, true);
-            mFeedListView.clearChoices();
-            mFeedListView.requestLayout();
+        }
+        // Highlight the selected item, update the title, and close the drawer
+        mHeaderList.setItemChecked(position, true);
+        mFeedListView.clearChoices();
+        mFeedListView.requestLayout();
 
-            if (position >= 0 && position < mTitles.length) {
-                setTitle(mTitles[position]);
-            } else {
-                setTitle(getString(R.string.app_name));
-            }
+        if (position >= 0 && position < mTitles.length) {
+            setTitle(mTitles[position]);
+        } else {
+            setTitle(getString(R.string.app_name));
         }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(GravityCompat.START);

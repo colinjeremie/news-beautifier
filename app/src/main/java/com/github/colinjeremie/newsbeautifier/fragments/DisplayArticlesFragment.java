@@ -1,5 +1,6 @@
 package com.github.colinjeremie.newsbeautifier.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -81,12 +83,17 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         mSwipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.colorAccent));
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        if (savedInstanceState != null){
-            textSearched = savedInstanceState.getString(SEARCH_TEXT, null);
-        }
         setHasOptionsMenu(true);
 
         return v;
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        if (savedInstanceState != null){
+            textSearched = savedInstanceState.getString(SEARCH_TEXT, null);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -108,6 +115,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
             String tmp = textSearched;
             item.expandActionView();
             searchView.setQuery(tmp, true);
+            searchView.clearFocus();
         }
     }
 
