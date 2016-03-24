@@ -1,6 +1,7 @@
 package com.github.colinjeremie.newsbeautifier.fragments;
 
-import android.content.Context;
+import android.content.AsyncTaskLoader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -16,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -43,19 +43,21 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         SwipeRefreshLayout.OnRefreshListener,
         PopupMenu.OnMenuItemClickListener {
 
-    static public final String SEARCH_TEXT = "SEARCH_TEXT";
+    public static final String SEARCH_TEXT = "com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment.SEARCH_TEXT";
+    public static final String FILTER = "com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment.FILTER";
 
-    static public final String FEED_URL = "FEED_URL";
-    static public final String FEED_USER_ID = "FEED_USER_ID";
-    static public final String ARTICLES = "ARTICLES";
+    public static final String FEED_URL = "com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment.FEED_URL";
+    public static final String FEED_USER_ID = "com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment.FEED_USER_ID";
+    public static final String ARTICLES = "com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment.ARTICLES";
 
     private RecyclerView mRecyclerView;
     private StaggeredRecyclerViewAdapter mAdapter;
-    private List<RSSItem> mArticleList;
+    private ArrayList<RSSItem> mArticleList;
     private String mFeedUrl;
     private Long mFeedUserId;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String textSearched;
+    private int mFilterPosition = -1;
 
     public DisplayArticlesFragment() {
     }
@@ -65,8 +67,12 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_display_articles, container, false);
 
-        mArticleList = getArguments().getParcelableArrayList(ARTICLES);
-        Collections.sort(mArticleList, new RSSItem.DateComparatorAsc());
+        if (savedInstanceState == null) {
+            mArticleList = getArguments().getParcelableArrayList(ARTICLES);
+            Collections.sort(mArticleList, new RSSItem.DateComparatorAsc());
+        } else {
+            mArticleList = savedInstanceState.getParcelableArrayList(ARTICLES);
+        }
         mFeedUrl = getArguments().getString(FEED_URL, null);
         mFeedUserId = getArguments().getLong(FEED_USER_ID, -1);
 
@@ -85,15 +91,11 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
 
         setHasOptionsMenu(true);
 
-        return v;
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
         if (savedInstanceState != null){
             textSearched = savedInstanceState.getString(SEARCH_TEXT, null);
+            mFilterPosition = savedInstanceState.getInt(FILTER, -1);
         }
-        super.onViewStateRestored(savedInstanceState);
+        return v;
     }
 
     @Override
@@ -101,6 +103,8 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         if (textSearched != null){
             outState.putString(SEARCH_TEXT, textSearched);
         }
+        outState.putParcelableArrayList(ARTICLES, mArticleList);
+        outState.putInt(FILTER, mFilterPosition);
         super.onSaveInstanceState(outState);
     }
 
@@ -180,6 +184,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         final RSSFeed feed = new RSSFeed(mFeedUrl);
         feed.setUserId(mFeedUserId == -1 ? null : mFeedUserId);
 
+        mArticleList = new ArrayList<>();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, feed.getUrl(),
                 new Response.Listener<String>() {
                     @Override
@@ -190,13 +195,13 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
-                        mArticleList = feed.getItems();
+                        mArticleList.addAll(feed.getItems());
                         refreshDone();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                mArticleList = feed.getItems();
+                mArticleList.addAll(feed.getItems());
                 refreshDone();
             }
         });
@@ -205,7 +210,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
 
     private void refreshUserFeeds() {
         final List<RSSFeed> feeds = ((MyApplication) getActivity().getApplication()).mUser.getFeeds();
-        final List<RSSItem> newItems = new ArrayList<>();
+        final ArrayList<RSSItem> newItems = new ArrayList<>();
 
         for (final RSSFeed feed : feeds){
             StringRequest stringRequest = new StringRequest(Request.Method.GET, feed.getUrl(),
@@ -248,27 +253,65 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
         }
     }
 
+    private void filterArticles(int position){
+        switch (position){
+            case 0:
+                sortList(new RSSItem.DateComparatorAsc());
+                break;
+            case 1:
+                sortList(new RSSItem.DateComparatorDesc());
+                break;
+            case 2:
+                sortList(new RSSItem.TitleComparatorAsc());
+                break;
+            case 3:
+                sortList(new RSSItem.TitleComparatorDesc());
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sort_date_asc:
+                mFilterPosition = 0;
                 sortList(new RSSItem.DateComparatorAsc());
                 return true;
             case R.id.sort_date_desc:
+                mFilterPosition = 1;
                 sortList(new RSSItem.DateComparatorDesc());
                 return true;
             case R.id.sort_title_asc:
+                mFilterPosition = 2;
                 sortList(new RSSItem.TitleComparatorAsc());
                 return true;
             case R.id.sort_title_desc:
+                mFilterPosition = 3;
                 sortList(new RSSItem.TitleComparatorDesc());
                 return true;
         }
         return false;
     }
 
-    private void sortList(Comparator<RSSItem> comparator){
-        Collections.sort(mAdapter.getitemList(), comparator);
-        mAdapter.notifyDataSetChanged();
+    private void sortList(final Comparator<RSSItem> comparator){
+        new AsyncTask<List<RSSItem>, Void, Void>() {
+            @Override
+            protected Void doInBackground(List<RSSItem>... params) {
+                for (List<RSSItem> tmp : params) {
+                    Collections.sort(tmp, comparator);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if (!isDetached() && isVisible()) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        }.execute(mArticleList, mAdapter.getitemList());
     }
 }
