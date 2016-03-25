@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,11 +39,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
-public class FeedSelectFragment extends Fragment {
+public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
-    private List<RSSFeed> mRssList = new ArrayList<>();
+    public static final String FEEDS = "com.github.colinjeremie.newsbeautifier.fragments.FeedSelectFragment.FEEDS";
+
+    private ArrayList<RSSFeed> mRssList = new ArrayList<>();
     private RssGridAdapter mRssGridAdapter;
     private TextInputLayout textInputLayout;
     private AlertDialog dialog;
@@ -57,21 +59,12 @@ public class FeedSelectFragment extends Fragment {
 
         GridView rssGridView = (GridView) inflatedView.findViewById(R.id.rssGridView);
 
-        mRssList = new Select()
-                .from(RSSFeed.class).queryList();
-
-        Collections.sort(mRssList, new Comparator<RSSFeed>() {
-            @Override
-            public int compare(RSSFeed lhs, RSSFeed rhs) {
-                if (lhs.getUserId() == null && rhs.getUserId() != null){
-                    return -1;
-                } else if (lhs.getUserId() != null && rhs.getUserId() == null){
-                    return 1;
-                }
-                return lhs.getTitle().toLowerCase().compareTo(rhs.getTitle().toLowerCase());
-            }
-        });
-
+        if (savedInstanceState == null) {
+            mRssList = new ArrayList<>(new Select()
+                    .from(RSSFeed.class).queryList());
+        } else {
+            mRssList = savedInstanceState.getParcelableArrayList(FEEDS);
+        }
         mRssGridAdapter = new RssGridAdapter(getActivity(), mRssList);
         rssGridView.setAdapter(mRssGridAdapter);
 
@@ -84,6 +77,12 @@ public class FeedSelectFragment extends Fragment {
 
         setHasOptionsMenu(true);
         return inflatedView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(FEEDS, mRssList);
+        super.onSaveInstanceState(outState);
     }
 
     public interface OnAddRssListener {
@@ -210,11 +209,11 @@ public class FeedSelectFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.feed_sort_menu, menu);
+        inflater.inflate(R.menu.feed_menu, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()){
             case R.id.sort_more_articles:
                 sortFeeds(new RSSFeed.ComparatorArticleCountDesc());
@@ -228,6 +227,26 @@ public class FeedSelectFragment extends Fragment {
             case R.id.sort_feed_unsubscribed:
                 sortFeeds(new RSSFeed.ComparatorUnSubscription());
                 return true;
+        }
+        return false;
+    }
+
+    public void showOverFlowMenu(int id) {
+        View view = this.getActivity().findViewById(id);
+        if (view != null) {
+            PopupMenu popup = new PopupMenu(getActivity(), view);
+            popup.setOnMenuItemClickListener(this);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.overflow_feed_sort_menu, popup.getMenu());
+            popup.show();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sort_action){
+            showOverFlowMenu(item.getItemId());
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
