@@ -1,11 +1,15 @@
 package com.github.colinjeremie.newsbeautifier.fragments;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
@@ -21,6 +25,7 @@ import com.github.colinjeremie.newsbeautifier.MyApplication;
 import com.github.colinjeremie.newsbeautifier.R;
 import com.github.colinjeremie.newsbeautifier.adapters.RssGridAdapter;
 import com.github.colinjeremie.newsbeautifier.models.RSSFeed;
+import com.github.colinjeremie.newsbeautifier.models.RSSItem;
 import com.github.colinjeremie.newsbeautifier.models.User;
 import com.github.colinjeremie.newsbeautifier.utils.MyRequestQueue;
 import com.github.colinjeremie.newsbeautifier.utils.OnMyFeedsChanged;
@@ -77,6 +82,7 @@ public class FeedSelectFragment extends Fragment {
             }
         });
 
+        setHasOptionsMenu(true);
         return inflatedView;
     }
 
@@ -181,6 +187,49 @@ public class FeedSelectFragment extends Fragment {
             }
         }
         return true;
+    }
+
+    private void sortFeeds(final Comparator<RSSFeed> comparator){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void ... params) {
+                Collections.sort(mRssList, comparator);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if (!isDetached() && isVisible()) {
+                    mRssGridAdapter.notifyDataSetChanged();
+                }
+            }
+        }.execute();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.feed_sort_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.sort_more_articles:
+                sortFeeds(new RSSFeed.ComparatorArticleCountDesc());
+                return true;
+            case R.id.sort_less_articles:
+                sortFeeds(new RSSFeed.ComparatorArticleCountAsc());
+                return true;
+            case R.id.sort_feed_subscribed:
+                sortFeeds(new RSSFeed.ComparatorSubscription());
+                return true;
+            case R.id.sort_feed_unsubscribed:
+                sortFeeds(new RSSFeed.ComparatorUnSubscription());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

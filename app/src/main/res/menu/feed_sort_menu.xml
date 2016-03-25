@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/sort_more_articles"
+        android:title="@string/sort_more_articles"/>
+    <item android:id="@+id/sort_less_articles"
+        android:title="@string/sort_less_articles"/>
+    <item android:id="@+id/sort_feed_subscribed"
+        android:title="@string/sort_feed_suscribed"/>
+    <item android:id="@+id/sort_feed_unsubscribed"
+        android:title="@string/sort_feed_unsuscribed"/>
+</menu>

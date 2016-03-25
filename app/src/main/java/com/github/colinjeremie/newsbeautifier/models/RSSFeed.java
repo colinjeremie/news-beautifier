@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -232,5 +233,43 @@ public class RSSFeed extends BaseModel implements Parcelable{
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public static final class ComparatorUnSubscription implements Comparator<RSSFeed> {
+        @Override
+        public int compare(RSSFeed o1, RSSFeed o2) {
+            if (o1.getUserId() == null && o2.getUserId() != null){
+                return 1;
+            } else if (o1.getUserId() != null && o2.getUserId() == null){
+                return -1;
+            }
+            return o1.getTitle().compareTo(o2.getTitle()) * -1;
+        }
+    }
+
+    public static final class ComparatorArticleCountDesc implements Comparator<RSSFeed> {
+        @Override
+        public int compare(RSSFeed o1, RSSFeed o2) {
+            return o2.getItems().size() - o1.getItems().size();
+        }
+    }
+
+    public static final class ComparatorArticleCountAsc implements Comparator<RSSFeed> {
+        @Override
+        public int compare(RSSFeed o1, RSSFeed o2) {
+            return o1.getItems().size() - o2.getItems().size();
+        }
+    }
+
+    public static final class ComparatorSubscription implements Comparator<RSSFeed> {
+        @Override
+        public int compare(RSSFeed o1, RSSFeed o2) {
+            if (o1.getUserId() == null && o2.getUserId() != null){
+                return -1;
+            } else if (o1.getUserId() != null && o2.getUserId() == null){
+                return 1;
+            }
+            return o1.getTitle().compareTo(o2.getTitle());
+        }
     }
 }

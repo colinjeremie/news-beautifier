@@ -1,6 +1,5 @@
 package com.github.colinjeremie.newsbeautifier.fragments;
 
-import android.content.AsyncTaskLoader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -110,7 +109,7 @@ public class DisplayArticlesFragment extends Fragment implements SearchView.OnQu
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.articles_search_menu, menu);
 
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);

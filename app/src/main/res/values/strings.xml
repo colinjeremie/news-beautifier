@@ -68,6 +68,10 @@
     <string name="rssImage">rss image</string>
     <string name="feed_subscribe">SUBSCRIBE</string>
     <string name="feed_unsubscribe">UNSUBSCRIBE</string>
+    <string name="sort_more_articles">More articles first</string>
+    <string name="sort_less_articles">Less articles first</string>
+    <string name="sort_feed_suscribed">Feeds suscribed</string>
+    <string name="sort_feed_unsuscribed">Feeds unsuscribed</string>
 
     <plurals name="feed_nb_articles">
         <item quantity="zero">%1$d article</item>
