@@ -50,6 +50,7 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
     private MenuItem mGridMenuItem;
     private MenuItem mListMenuItem;
     private GridView mRssGridView;
+    private boolean isTablet;
 
     public FeedSelectFragment() {
     }
@@ -59,6 +60,7 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
                              Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.fragment_feed_select, container, false);
 
+        isTablet = getResources().getBoolean(R.bool.isTablet);
         mRssGridView = (GridView) inflatedView.findViewById(R.id.rssGridView);
 
         if (savedInstanceState == null) {
@@ -213,6 +215,10 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         super.onPrepareOptionsMenu(menu);
         mGridMenuItem = menu.findItem(R.id.display_grid_action);
         mListMenuItem = menu.findItem(R.id.display_list_action);
+        if (isTablet){
+            mGridMenuItem.setVisible(false);
+            mListMenuItem.setVisible(false);
+        }
     }
 
     @Override
