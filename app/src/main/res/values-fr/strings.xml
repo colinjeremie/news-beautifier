@@ -9,7 +9,7 @@
     <string name="article_pubDate">Posté par %1$s</string>
     <string name="drawer_feed_title">Mes flux</string>
     <string name="empty_view_text">Aucun article</string>
-    <string name="feedback_email_title">Commentaires</string>
+    <string name="feedback_email_title">[NEWS_BEAUTIFIER] Android : Commentaires</string>
     <string name="feedback_send_title">Envoyer un commentaire</string>
     <string name="menu_feed_select">Flux RSS</string>
     <string name="menu_home">Accueil</string>

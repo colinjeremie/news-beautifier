@@ -23,7 +23,6 @@
 
     <string-array name="email_contacts" translatable="false">
         <item>colinjeremie9@gmail.com</item>
-        <item>james.cooper@epitech.eu</item>
     </string-array>
 
     <string-array name="settings_array" translatable="false">
@@ -47,7 +46,7 @@
 
     <!-- About and feedback sections -->
     <string name="feedback_send_title">Send Feedback:</string>
-    <string name="feedback_email_title">Feedback</string>
+    <string name="feedback_email_title">[NEWS_BEAUTIFIER] Android : Feedback</string>
     <string name="about_version">Version</string>
     <string name="empty_view_text">No article</string>
     <string name="sort">Sort by</string>

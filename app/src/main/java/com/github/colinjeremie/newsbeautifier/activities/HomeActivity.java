@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.github.colinjeremie.newsbeautifier.BuildConfig;
 import com.github.colinjeremie.newsbeautifier.MyApplication;
 import com.github.colinjeremie.newsbeautifier.R;
 import com.github.colinjeremie.newsbeautifier.fragments.DisplayArticlesFragment;
@@ -121,10 +122,13 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
     }
 
     private void sendFeedBack() {
+        String subject = getString(R.string.feedback_email_title);
+        subject += " v" + BuildConfig.VERSION_NAME + "r-" + BuildConfig.VERSION_CODE;
+
         Intent Email = new Intent(Intent.ACTION_SEND);
         Email.setType("text/email");
         Email.putExtra(Intent.EXTRA_EMAIL, getResources().getStringArray(R.array.email_contacts));
-        Email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_email_title));
+        Email.putExtra(Intent.EXTRA_SUBJECT, subject);
         startActivity(Intent.createChooser(Email, getString(R.string.feedback_send_title)));
     }
 
