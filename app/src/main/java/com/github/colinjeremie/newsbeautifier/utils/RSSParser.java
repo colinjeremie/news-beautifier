@@ -54,7 +54,7 @@ public class RSSParser {
             parser.setInput(in, null);
             parser.nextTag();
 
-            while (parser.next() != XmlPullParser.END_TAG) {
+            while (parser.next() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }

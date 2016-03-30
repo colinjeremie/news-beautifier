@@ -26,7 +26,6 @@ import com.github.colinjeremie.newsbeautifier.MyApplication;
 import com.github.colinjeremie.newsbeautifier.R;
 import com.github.colinjeremie.newsbeautifier.adapters.RssGridAdapter;
 import com.github.colinjeremie.newsbeautifier.models.RSSFeed;
-import com.github.colinjeremie.newsbeautifier.models.RSSItem;
 import com.github.colinjeremie.newsbeautifier.models.User;
 import com.github.colinjeremie.newsbeautifier.utils.MyRequestQueue;
 import com.github.colinjeremie.newsbeautifier.utils.OnMyFeedsChanged;
@@ -48,6 +47,9 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
     private RssGridAdapter mRssGridAdapter;
     private TextInputLayout textInputLayout;
     private AlertDialog dialog;
+    private MenuItem mGridMenuItem;
+    private MenuItem mListMenuItem;
+    private GridView mRssGridView;
 
     public FeedSelectFragment() {
     }
@@ -57,7 +59,7 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
                              Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.fragment_feed_select, container, false);
 
-        GridView rssGridView = (GridView) inflatedView.findViewById(R.id.rssGridView);
+        mRssGridView = (GridView) inflatedView.findViewById(R.id.rssGridView);
 
         if (savedInstanceState == null) {
             mRssList = new ArrayList<>(new Select()
@@ -66,7 +68,7 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
             mRssList = savedInstanceState.getParcelableArrayList(FEEDS);
         }
         mRssGridAdapter = new RssGridAdapter(getActivity(), mRssList);
-        rssGridView.setAdapter(mRssGridAdapter);
+        mRssGridView.setAdapter(mRssGridAdapter);
 
         inflatedView.findViewById(R.id.btn_add_rss_action).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +209,13 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        mGridMenuItem = menu.findItem(R.id.display_grid_action);
+        mListMenuItem = menu.findItem(R.id.display_list_action);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.feed_menu, menu);
@@ -246,6 +255,19 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.sort_action){
             showOverFlowMenu(item.getItemId());
+            return true;
+        } else if (item.getItemId() == R.id.display_grid_action){
+            mRssGridView.setNumColumns(2);
+            mGridMenuItem.setVisible(false);
+            mListMenuItem.setVisible(true);
+            mRssGridAdapter.setMode(RssGridAdapter.MODE_GRID);
+            mRssGridAdapter.notifyDataSetInvalidated();
+            return true;
+        } else if (item.getItemId() == R.id.display_list_action){
+            mRssGridView.setNumColumns(1);
+            mGridMenuItem.setVisible(true);
+            mListMenuItem.setVisible(false);
+            mRssGridAdapter.setMode(RssGridAdapter.MODE_LIST);
             return true;
         }
         return super.onOptionsItemSelected(item);

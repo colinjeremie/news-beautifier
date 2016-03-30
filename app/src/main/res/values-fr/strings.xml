@@ -37,4 +37,16 @@
     <string name="error_this_feed_cannot_be_added">Erreur ce flux ne peut pas être ajouté</string>
     <string name="error_this_feed_is_not_a_valid_rss_feed">Erreur ce flux n\'est pas un flux RSS</string>
     <string name="your_feed_has_been_added">Votre flux a été ajouté avec succès !</string>
+    <string name="feed_subscribe">S\'ABONNER</string>
+    <string name="feed_unsubscribe">SE DESABONNER</string>
+    <string name="sort_feed_suscribed">Flux abonnés</string>
+    <string name="sort_feed_unsuscribed">Flux non abonnés</string>
+    <string name="sort_less_articles">Peu d\'articles</string>
+    <string name="sort_more_articles">Plus d\'articles</string>
+    <string name="zero_article">%1$d article</string>
+    <string name="one_article">%1$d article</string>
+    <string name="other_article">%1$d articles</string>
+    <string name="display_grid">Affichage en grille</string>
+    <string name="display_list">Affichage en liste</string>
+
 </resources>

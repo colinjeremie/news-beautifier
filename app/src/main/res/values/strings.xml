@@ -65,7 +65,7 @@
     <string name="dialog_add_rss_title">Create a new feed</string>
     <string name="url_cannot_be_empty">You must enter a valid URL</string>
     <string name="your_feed_has_been_added">Your feed has been added with success!</string>
-    <string name="rssImage">rss image</string>
+    <string name="rssImage" translatable="false">rss image</string>
     <string name="feed_subscribe">SUBSCRIBE</string>
     <string name="feed_unsubscribe">UNSUBSCRIBE</string>
     <string name="sort_more_articles">More articles first</string>
@@ -73,9 +73,15 @@
     <string name="sort_feed_suscribed">Feeds suscribed</string>
     <string name="sort_feed_unsuscribed">Feeds unsuscribed</string>
 
+    <string name="zero_article">%1$d article</string>
+    <string name="one_article">%1$d article</string>
+    <string name="other_article">%1$d articles</string>
+    <string name="display_list">Display in list</string>
+    <string name="display_grid">Display by grid</string>
+
     <plurals name="feed_nb_articles">
-        <item quantity="zero">%1$d article</item>
-        <item quantity="one">%1$d article</item>
-        <item quantity="other">%1$d articles</item>
+        <item quantity="zero">@string/zero_article</item>
+        <item quantity="one">@string/one_article</item>
+        <item quantity="other">@string/other_article</item>
     </plurals>
 </resources>

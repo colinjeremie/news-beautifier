@@ -25,11 +25,15 @@ import java.util.List;
  */
 public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
 
+    public static int MODE_LIST = 1;
+    public static int MODE_GRID = 2;
+
+    private Integer mMode = MODE_LIST;
     private User mUser;
     private Activity mActivity;
 
     public RssGridAdapter(Activity activity, List<RSSFeed> rssList){
-        super(activity, R.layout.grid_feed_item, rssList);
+        super(activity, R.layout.list_feed_item, rssList);
 
         mActivity = activity;
         mUser = ((MyApplication)mActivity.getApplication()).mUser;
@@ -42,21 +46,27 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        ViewHolder holder = null;
         RSSFeed feed = getItem(position);
 
-        if (convertView == null) {
+        if (convertView != null){
+            holder = (ViewHolder)convertView.getTag();
+        }
+        if (convertView == null || holder.mode != mMode) {
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) mActivity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.grid_feed_item, parent, false);
+            if (mMode == MODE_GRID) {
+                convertView = inflater.inflate(R.layout.grid_feed_item, parent, false);
+            } else {
+                convertView = inflater.inflate(R.layout.list_feed_item, parent, false);
+            }
             holder.feedTitle = (TextView) convertView.findViewById(R.id.feed_title);
             holder.feedDescription = (TextView) convertView.findViewById(R.id.feed_description);
             holder.actionTextView = (TextView) convertView.findViewById(R.id.cardview_action);
             holder.countArticles = (TextView) convertView.findViewById(R.id.feed_nb_articles);
+            holder.mode = mMode;
             convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder)convertView.getTag();
         }
 
         holder.pos = position;
@@ -64,7 +74,9 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         holder.feedDescription.setText(feed.getDescription());
 
         int nb = feed.getItems().size();
-        holder.countArticles.setText(convertView.getContext().getResources().getQuantityString(R.plurals.feed_nb_articles, nb, nb));
+        if (holder.countArticles != null) {
+            holder.countArticles.setText(convertView.getContext().getResources().getQuantityString(R.plurals.feed_nb_articles, nb, nb));
+        }
         holder.actionTextView.setOnClickListener(new OnRssFeedClick(holder));
 
         if (feed.getUserId() == null){
@@ -78,7 +90,7 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         return convertView;
     }
 
-    private void tintActionTextView(TextView textView, int colorRes){
+    private void tintActionTextView(TextView textView, int colorRes) {
         textView.setTextColor(ContextCompat.getColor(textView.getContext(), colorRes));
         for (Drawable tmp : textView.getCompoundDrawables()){
             if (tmp != null){
@@ -94,6 +106,7 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         public TextView feedDescription;
         public TextView actionTextView;
         public TextView countArticles;
+        public Integer mode = MODE_LIST;
     }
 
     private class OnRssFeedClick implements View.OnClickListener {
@@ -105,7 +118,7 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         @Override
         public void onClick(View v) {
             RSSFeed feed = getItem(mViewHolder.pos);
-            if (feed.getUserId() == null){
+            if (feed.getUserId() == null) {
                 mUser.addFeed(feed);
                 feed.setUserId(mUser.getId());
                 mViewHolder.actionTextView.setText(v.getContext().getString(R.string.feed_unsubscribe));
@@ -124,5 +137,9 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setMode(Integer pMode) {
+        mMode = pMode;
     }
 }
