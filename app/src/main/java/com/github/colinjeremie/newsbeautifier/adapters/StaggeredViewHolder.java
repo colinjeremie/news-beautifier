@@ -12,7 +12,7 @@ import com.github.colinjeremie.newsbeautifier.activities.ArticleActivity;
 import com.github.colinjeremie.newsbeautifier.models.RSSItem;
 
 /**
- ** NewsBeautifier
+ * View Holder for {@link StaggeredRecyclerViewAdapter}
  * Created by james_000 on 2/25/2016.
  */
 public class StaggeredViewHolder  extends RecyclerView.ViewHolder implements View.OnClickListener {

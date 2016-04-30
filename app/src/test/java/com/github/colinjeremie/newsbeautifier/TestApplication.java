@@ -1,6 +1,4 @@
-package com.github.newsbeautifier;
-
-import com.github.colinjeremie.newsbeautifier.MyApplication;
+package com.github.colinjeremie.newsbeautifier;
 
 /**
  ** cohop-android

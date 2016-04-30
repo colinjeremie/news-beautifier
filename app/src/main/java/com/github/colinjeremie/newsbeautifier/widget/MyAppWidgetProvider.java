@@ -26,13 +26,21 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
- * * NewsBeautifier
+ * Widget provider
+ *
  * Created by jerem_000 on 3/1/2016.
  */
 public class MyAppWidgetProvider extends AppWidgetProvider {
     public static final String ACTION = "com.github.colinjeremie.newsbeautifier.widget.MyAppWidgetProvider.ACTION";
     public static final String EXTRA_ITEM = "com.github.colinjeremie.newsbeautifier.widget.MyAppWidgetProvider.EXTRA_ITEM";
 
+    /**
+     * Received when an article has been clicked
+     * We create the logical navigation hierarchy with the {@link TaskStackBuilder}
+     *
+     * @param context Context
+     * @param intent Intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION)) {
@@ -48,6 +56,14 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
     }
 
+    /**
+     * Callback when the widgets need to be updated
+     * We refresh the articles' feeds by creating new requests
+     *
+     * @param context Context
+     * @param appWidgetManager AppZidgetMaanger
+     * @param appWidgetIds int[] the array id's of the widget currently on the Home Screen of the phone
+     */
     @Override
      public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         refreshUserFeeds(context, appWidgetManager, appWidgetIds);
@@ -81,8 +97,15 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
+    /**
+     * Set up the intent that starts the {@link StackWidgetService} used for this special widget
+     * When the user touches a particular view it sends a broadcast with the action {@link #ACTION}
+     *
+     * @param context Context
+     * @param appWidgetManager AppWidgetManager
+     * @param appWidgetIds int[]
+     */
     private void updateWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // update each of the app widgets with the remote adapter
         for (int appWidgetId : appWidgetIds) {
             // Set up the intent that starts the StackViewService, which will
             // provide the views for this collection.
@@ -105,9 +128,6 @@ public class MyAppWidgetProvider extends AppWidgetProvider {
 
             Intent intent2 = new Intent(context, MyAppWidgetProvider.class);
 
-            // Set the action for the intent.
-            // When the user touches a particular view, it will have the effect of
-            // broadcasting TOAST_ACTION.
             intent2.setAction(MyAppWidgetProvider.ACTION);
             intent2.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent2,

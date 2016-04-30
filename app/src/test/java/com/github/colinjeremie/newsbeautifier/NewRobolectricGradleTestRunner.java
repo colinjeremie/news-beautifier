@@ -1,4 +1,4 @@
-package com.github.newsbeautifier;
+package com.github.colinjeremie.newsbeautifier;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricGradleTestRunner;

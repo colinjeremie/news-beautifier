@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * * NewsBeautifier
+ * The user of the app
  * Created by jerem_000 on 2/19/2016.
  */
 
@@ -19,6 +19,11 @@ public class User {
 
     public User(){}
 
+    /**
+     * Fetch the user feed from the Db
+     *
+     * @return the user's feeds
+     */
     public List<RSSFeed> getFeeds() {
         if (feeds == null){
             feeds = new Select()
@@ -29,6 +34,12 @@ public class User {
         return feeds;
     }
 
+    /**
+     * Return the last <code>nbArticles</code> {@link RSSItem} of the User with a picture
+     *
+     * @param nbArticles the limit of {@link RSSItem} returned
+     * @return List<RSSItem>
+     */
     public List<RSSItem> getLastArticlesWithPicture(Integer nbArticles){
         List<RSSItem> list = new ArrayList<>();
 
@@ -59,6 +70,11 @@ public class User {
         feeds = pFeeds;
     }
 
+    /**
+     * Associate a {@link RSSFeed} with a {@link User}
+     *
+     * @param feed RSSFeed
+     */
     public void addFeed(RSSFeed feed) {
         boolean allow = true;
 
@@ -73,6 +89,11 @@ public class User {
         }
     }
 
+    /**
+     * Unmatch a {@link RSSFeed} with a {@link User}
+     *
+     * @param feed RSSFeed
+     */
     public void removeFeed(RSSFeed feed) {
         for (Iterator<RSSFeed> it = feeds.iterator(); it.hasNext();) {
             if (it.next().getUrl().equals(feed.getUrl())) {

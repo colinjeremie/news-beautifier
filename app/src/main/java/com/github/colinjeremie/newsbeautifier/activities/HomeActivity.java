@@ -27,17 +27,54 @@ import com.github.colinjeremie.newsbeautifier.utils.OnMyFeedsChanged;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main activity
+ */
 public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged {
 
-    public static final String POSITION = "POSITION";
-    public static final String LIST_TYPE = "LIST_TYPE";
+    /**
+     * The Feed position selected
+     */
+    public static final String POSITION = "com.github.colinjeremie.newsbeautifier.activities.POSITION";
+
+    /**
+     * Header position
+     */
+    public static final String LIST_TYPE = "com.github.colinjeremie.newsbeautifier.activities.LIST_TYPE";
+
+    /**
+     * Header type clicked
+     */
     private static final int HEADER_TYPE = 0;
+
+    /**
+     * Feed type clicked
+     */
     private static final int FEED_TYPE = 1;
 
+    /**
+     * The drawer menu
+     */
     private DrawerLayout mDrawerLayout;
+
+    /**
+     * The Header list
+     */
     private ListView mHeaderList;
+
+    /**
+     * The {@link com.github.colinjeremie.newsbeautifier.models.User#feeds}
+     */
     private ListView mFeedListView;
+
+    /**
+     * The adapter for the {@link #mFeedListView}
+     */
     private FeedAdapter mFeedAdapter;
+
+    /**
+     * Title of the menu sections
+     */
     private String[] mTitles;
 
     @Override
@@ -47,7 +84,9 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mHeaderList = (ListView) navigationView.getHeaderView(0).findViewById(R.id.left_drawer);
+        if (navigationView != null && navigationView.getHeaderView(0) != null) {
+            mHeaderList = (ListView) navigationView.getHeaderView(0).findViewById(R.id.left_drawer);
+        }
         mFeedListView = (ListView) findViewById(R.id.feed_list_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -65,7 +104,10 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
 
         mHeaderList.setOnItemClickListener(new HeaderItemClickListener());
 
-        ((ListView) findViewById(R.id.settings_list_view)).setOnItemClickListener(settingsItemClickListener);
+        ListView settingsListView = (ListView) findViewById(R.id.settings_list_view);
+        if (settingsListView != null) {
+            settingsListView.setOnItemClickListener(settingsItemClickListener);
+        }
 
         initMyFeeds();
 
@@ -74,6 +116,11 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         }
     }
 
+    /**
+     * Select the previous item
+     *
+     * @param savedInstanceState Bundle
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         int position = 0;
@@ -91,6 +138,11 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    /**
+     * Save the current items from the menu selected
+     *
+     * @param outState Bundle
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         int headerPos = mHeaderList.getCheckedItemPosition();
@@ -106,6 +158,9 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * OnClickListener for the settings ListView
+     */
     private AdapterView.OnItemClickListener settingsItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -132,6 +187,9 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         startActivity(Intent.createChooser(Email, getString(R.string.feedback_send_title)));
     }
 
+    /**
+     * Init the display of the view
+     */
     private void initMyFeeds() {
         mFeedAdapter = new FeedAdapter();
         mFeedListView.setAdapter(mFeedAdapter);
@@ -143,6 +201,12 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         });
     }
 
+    /**
+     * Select a feed and refresh the FrameLayout
+     *
+     * @param position int the position of the feed in the menu list
+     * @param mustInstantiateFragment boolean
+     */
     private void selectFeed(int position, boolean mustInstantiateFragment) {
         if (position >= 0 && position < mFeedAdapter.getCount()) {
             RSSFeed feed = mFeedAdapter.getItem(position);
@@ -184,11 +248,17 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         }
     }
 
+    /**
+     * Callback when a User feed changed its state
+     */
     @Override
     public void onMyFeedsChanged() {
         mFeedAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Click on a Header item
+     */
     private class HeaderItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -196,7 +266,12 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         }
     }
 
-    /** Swaps fragments in the main content view */
+    /**
+     * Swaps fragments in the main content view
+     *
+     * @param position int
+     * @param mustInstantiateFragment boolean
+     */
     private void selectHeaderItem(int position, boolean mustInstantiateFragment) {
         if (position >= 0 &&
                 position != mHeaderList.getSelectedItemPosition() && mustInstantiateFragment) {
@@ -233,6 +308,11 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         }
     }
 
+    /**
+     * Get all {@link com.github.colinjeremie.newsbeautifier.models.User#feeds}
+     *
+     * @return the {@link com.github.colinjeremie.newsbeautifier.models.User#feeds}
+     */
     private ArrayList<RSSItem> getAllArticles(){
         List<RSSFeed> feedList = ((MyApplication)(getApplication())).mUser.getFeeds();
         ArrayList<RSSItem> articleList = new ArrayList<>();
@@ -243,6 +323,9 @@ public class HomeActivity extends AppCompatActivity implements OnMyFeedsChanged 
         return articleList;
     }
 
+    /**
+     * Adapter to display the {@link RSSFeed} in the menu
+     */
     private class FeedAdapter extends ArrayAdapter<RSSFeed>{
         public FeedAdapter(){
             super(HomeActivity.this, R.layout.menu_feed_item, ((MyApplication)getApplication()).mUser.getFeeds());

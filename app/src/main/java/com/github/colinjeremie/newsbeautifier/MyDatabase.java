@@ -3,7 +3,8 @@ package com.github.colinjeremie.newsbeautifier;
 import com.raizlabs.android.dbflow.annotation.Database;
 
 /**
- * * NewsBeautifier
+ * Database use to save the articles in the SQLite db
+ *
  * Created by jerem_000 on 2/19/2016.
  */
 @Database(name = MyDatabase.NAME, version = MyDatabase.VERSION)

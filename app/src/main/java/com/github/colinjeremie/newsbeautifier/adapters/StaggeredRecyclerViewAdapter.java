@@ -1,7 +1,7 @@
 package com.github.colinjeremie.newsbeautifier.adapters;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,18 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- ** NewsBeautifier
+ * Adapter used to display a list of {@link StaggeredRecyclerViewAdapter#itemList}
+ *
  * Created by james_000 on 2/25/2016.
  */
 
-public class StaggeredRecyclerViewAdapter  extends RecyclerView.Adapter<StaggeredViewHolder> {
+public class StaggeredRecyclerViewAdapter extends RecyclerView.Adapter<StaggeredViewHolder> {
 
     private List<RSSItem> itemList;
-    private Activity mActivity;
+    private Context mContext;
 
-    public StaggeredRecyclerViewAdapter(Activity activity, List<RSSItem> itemList) {
+    /**
+     * Constructor
+     *
+     * @param pContext Context
+     * @param itemList the Data
+     */
+    public StaggeredRecyclerViewAdapter(Context pContext, List<RSSItem> itemList) {
         this.itemList = new ArrayList<>(itemList);
-        this.mActivity = activity;
+        this.mContext = pContext;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class StaggeredRecyclerViewAdapter  extends RecyclerView.Adapter<Staggere
     public void onBindViewHolder(StaggeredViewHolder holder, int position) {
         holder.article = itemList.get(position);
         holder.articleTitle.setText(itemList.get(position).getTitle());
-        Glide.with(mActivity).load(itemList.get(position).getImage())
+        Glide.with(mContext).load(itemList.get(position).getImage())
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .into(holder.articlePhoto);
     }
@@ -55,17 +62,34 @@ public class StaggeredRecyclerViewAdapter  extends RecyclerView.Adapter<Staggere
         return itemList;
     }
 
+    /**
+     * Remove an item and notify
+     *
+     * @param position int
+     * @return the item removed
+     */
     public RSSItem removeItem(int position) {
         final RSSItem model = itemList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
+    /**
+     * Add an item and notify the insertion
+     *
+     * @param position the position to add the item
+     * @param model The model to add
+     */
     public void addItem(int position, RSSItem model) {
         itemList.add(position, model);
         notifyItemInserted(position);
     }
 
+    /**
+     * Move an item and notify the movement
+     * @param fromPosition int
+     * @param toPosition int
+     */
     public void moveItem(int fromPosition, int toPosition) {
         final RSSItem model = itemList.remove(fromPosition);
         itemList.add(toPosition, model);

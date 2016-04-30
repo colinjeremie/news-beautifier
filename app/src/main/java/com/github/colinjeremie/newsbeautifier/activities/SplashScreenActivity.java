@@ -23,8 +23,15 @@ import java.util.List;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final long DELAY_TIME = 3000;
+    /**
+     * Delay time to keep the activity alive in ms
+     */
+    private static final long DELAY_TIME = 2000;
 
+    /**
+     * Init the blogs and articles from {@link RSSParser#RSS_FEEDS }
+     * @param savedInstanceState Bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +45,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Launch the {@link HomeActivity} after {@link #DELAY_TIME} milliseconds
+     */
     @Override
     protected void onStart() {
         super.onStart();

@@ -16,7 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * * NewsBeautifier
+ * The representation of a Blog
+ * Also a representation of a Table in the Db
+ *
  * Created by jerem_000 on 2/18/2016.
  */
 
@@ -64,11 +66,17 @@ public class RSSFeed extends BaseModel implements Parcelable{
     @Column
     private String updatedDate = "";
 
+    /**
+     * The list of {@link RSSItem}
+     */
     List<RSSItem> items = new ArrayList<>();
 
     @Column
     private String image;
 
+    /**
+     * If it's not null it means that it's a user favorite
+     */
     @Column
     Long userId;
 

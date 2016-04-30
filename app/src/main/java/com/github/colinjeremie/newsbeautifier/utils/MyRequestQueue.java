@@ -7,7 +7,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 /**
- * * NewsBeautifier
+ * Singleton to manage the requests
+ * Each request is inserting into a queue
+ * Basically it's a container of a {@link RequestQueue} accessible through a singleton
+ *
  * Created by jerem_000 on 2/25/2016.
  */
 public class MyRequestQueue {

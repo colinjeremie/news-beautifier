@@ -18,7 +18,10 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         AboutAdapter aboutAdapter = new AboutAdapter(this);
-        ((ListView)findViewById(R.id.list_view)).setAdapter(aboutAdapter);
+        ListView listView = (ListView) findViewById(R.id.list_view);
+        if (listView != null) {
+            listView.setAdapter(aboutAdapter);
+        }
 
         // add version
         aboutAdapter.add(new AboutAdapter.Model(getString(R.string.about_version), getVersionName()));

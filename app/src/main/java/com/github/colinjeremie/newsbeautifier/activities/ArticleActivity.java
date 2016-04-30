@@ -21,10 +21,19 @@ import org.jsoup.Jsoup;
 
 import java.text.DateFormat;
 
+/**
+ * Display a blog article
+ */
 public class ArticleActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static String ARTICLE = "ARTICLE";
+    /**
+     * The key used to transfert the Article through the intent
+     */
+    public static String ARTICLE = "com.github.colinjeremie.newsbeautifier.activities.ARTICLE";
 
+    /**
+     * The Article to display
+     */
     private RSSItem mModel;
 
     @Override
@@ -34,14 +43,22 @@ public class ArticleActivity extends AppCompatActivity implements View.OnClickLi
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        View shareBtn = findViewById(R.id.share_fab);
 
-        findViewById(R.id.share_fab).setOnClickListener(this);
+        if (shareBtn != null){
+            shareBtn.setOnClickListener(this);
+        }
 
         mModel = getIntent().getParcelableExtra(ARTICLE);
-        collapsingToolbarLayout.setTitle(mModel.getCategory().isEmpty() ? "Article" : mModel.getCategory());
+        if (collapsingToolbarLayout != null) {
+            collapsingToolbarLayout.setTitle(mModel.getCategory().isEmpty() ? getString(R.string.toolbar_title_article) : mModel.getCategory());
+        }
         initViews();
     }
 
+    /**
+     * Get and bind the views
+     */
     private void initViews(){
         TextView title = (TextView) findViewById(R.id.article_title);
         TextView author = (TextView) findViewById(R.id.article_published_author);
@@ -105,6 +122,9 @@ public class ArticleActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Launch an intent to share the article
+     */
     private void shareArticle(){
         if (mModel != null) {
             Intent shareIntent = new Intent();

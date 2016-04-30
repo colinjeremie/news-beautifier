@@ -19,12 +19,16 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * * NewsBeautifier
+ * The representation of an Article
+ * Also a Table in the Db
  * Created by jerem_000 on 2/18/2016.
  */
 
 @Table(database = MyDatabase.class)
 public class RSSItem extends BaseModel implements Parcelable{
+    /**
+     * Keys used to parse a Rss feed entry
+     */
     public static final String GUID_TAG = "guid";
     public static final String TITLE_TAG = "title";
     public static final String CATEGORY_TAG = "category";
@@ -42,7 +46,9 @@ public class RSSItem extends BaseModel implements Parcelable{
     public static final String PUBDATE_TAG = "published";
     public static final String PUBDATE_TAG2 = "pubDate";
 
-
+    /**
+     * Format of the date presents in the norme RSS2.0
+     */
     static public final String FORMAT = "E',' d LLL yyyy k':'m':'s Z";
 
     @PrimaryKey
@@ -58,11 +64,17 @@ public class RSSItem extends BaseModel implements Parcelable{
     @Column
     private String category = "";
 
+    /**
+     * Full content of the article
+     */
     @Column
-    private String content = ""; // full content of the article
+    private String content = "";
 
+    /**
+     * Summary of the article
+     */
     @Column
-    private String description = ""; // summary of the article
+    private String description = "";
 
     @Column
     private String language = "";
@@ -169,6 +181,10 @@ public class RSSItem extends BaseModel implements Parcelable{
         return description;
     }
 
+    /**
+     * We set the description and extracts the possible image from it
+     * @param pDescription String
+     */
     public void setDescription(String pDescription) {
         description = pDescription;
         if (!description.isEmpty()){
@@ -212,6 +228,10 @@ public class RSSItem extends BaseModel implements Parcelable{
         this.image = image;
     }
 
+    /**
+     * We parse the date in the {@link String} format to return a {@link Date} format
+     * @return the Date object representation
+     */
     public Date getPubDateFormat() {
         if (pubDateFormat == null){
             SimpleDateFormat sdf = new SimpleDateFormat(FORMAT, Locale.US);
@@ -253,6 +273,9 @@ public class RSSItem extends BaseModel implements Parcelable{
         return title;
     }
 
+    /**
+     * Comparator of Date ASC
+     */
     public static final class DateComparatorAsc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
@@ -263,7 +286,9 @@ public class RSSItem extends BaseModel implements Parcelable{
         }
     }
 
-
+    /**
+     * Comparator of Date DESC
+     */
     public static final class DateComparatorDesc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
@@ -274,6 +299,9 @@ public class RSSItem extends BaseModel implements Parcelable{
         }
     }
 
+    /**
+     * Comparator of Title ASC
+     */
     public static final class TitleComparatorAsc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
@@ -281,24 +309,13 @@ public class RSSItem extends BaseModel implements Parcelable{
         }
     }
 
+    /**
+     * Comparator of Title DESC
+     */
     public static final class TitleComparatorDesc implements Comparator<RSSItem> {
         @Override
         public int compare(RSSItem o1, RSSItem o2) {
             return o1.getTitle().compareTo(o2.getTitle()) * -1;
-        }
-    }
-
-    public static final class CategoryComparator implements Comparator<RSSItem> {
-        @Override
-        public int compare(RSSItem o1, RSSItem o2) {
-            return o1.getCategory().compareTo(o2.getCategory());
-        }
-    }
-
-    public static final class LanguageComparator implements Comparator<RSSItem> {
-        @Override
-        public int compare(RSSItem o1, RSSItem o2) {
-            return o1.getLanguage().compareTo(o2.getLanguage());
         }
     }
 }

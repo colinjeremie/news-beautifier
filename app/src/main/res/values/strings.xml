@@ -77,6 +77,7 @@
     <string name="other_article">%1$d articles</string>
     <string name="display_list">Display in list</string>
     <string name="display_grid">Display by grid</string>
+    <string name="toolbar_title_article">Article</string>
 
     <plurals name="feed_nb_articles">
         <item quantity="zero">@string/zero_article</item>

@@ -14,10 +14,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * * NewsBeautifier
+ * Parser rss to fetch blog and articles
+ *
  * Created by jerem_000 on 2/21/2016.
  */
 public class RSSParser {
+    /**
+     * Feeds by default in the app
+     */
     public static final RSSFeed[] RSS_FEEDS = {
             new RSSFeed("http://www.legorafi.fr/feed/"),
             new RSSFeed("http://www.begeek.fr/feed"),
@@ -28,12 +32,30 @@ public class RSSParser {
             new RSSFeed("http://feeds.feedburner.com/Iphoneaddictfr?format=xml")
     };
 
+    /**
+     * Namespace used for the {@link XmlPullParser}
+     */
     private static final String ns = null;
+
+    /**
+     * Read timeout to get an {@link InputStream} from an url
+     */
     private static final int READ_TIMEOUT = 10000;
+
+    /**
+     * Connect timeout to get an {@link InputStream} from an url
+     */
     private static final int CONNECT_TIMEOUT = 15000;
 
+    /**
+     * Static instance of {@link RSSParser}
+     */
     private static RSSParser _instance = null;
 
+    /**
+     * Singleton to get the RSSParser {@link #_instance}
+     * @return {@link #_instance}
+     */
     public static RSSParser getInstance(){
         if (_instance == null){
             _instance = new RSSParser();
@@ -42,6 +64,13 @@ public class RSSParser {
     }
 
 
+    /**
+     * Read a RssFeed from <code>feed</code>
+     * The {@link RSSFeed} and the {@link RSSItem} are saved in the local databse
+     * @param in the stream pointed to the Feed url
+     * @param feed The feed to bind
+     * @return feed
+     */
     public RSSFeed readRssFeed(InputStream in, RSSFeed feed) {
         XmlPullParser parser = Xml.newPullParser();
 
@@ -119,6 +148,13 @@ public class RSSParser {
         return feed;
     }
 
+    /**
+     * Returns the url of the image
+     * @param parser XMLPullParser
+     * @return The url of the image
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private String readImage(XmlPullParser parser) throws IOException, XmlPullParserException {
         String url = "";
         parser.require(XmlPullParser.START_TAG, ns, RSSFeed.IMAGE_TAG);
@@ -138,12 +174,27 @@ public class RSSParser {
         return url;
     }
 
+    /**
+     * Read the language of the feed
+     * @param parser XMLPullparser
+     * @return The String of the language
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private String readLanguage(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, RSSFeed.FEED_TAG);
 
         return parser.getAttributeValue(null, RSSFeed.LANGUAGE_ATTRIBUTE);
     }
 
+    /**
+     * Read a Feed entry starting at the <code>itemTag</code>
+     * @param parser XMLPullParser
+     * @param itemTag String eg. entry, item
+     * @return The {@link RSSItem} with the data parsed from the <code>parser</code>
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private RSSItem readEntry(XmlPullParser parser, String itemTag) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, itemTag);
         RSSItem item = new RSSItem();
@@ -207,6 +258,11 @@ public class RSSParser {
         return item;
     }
 
+    /**
+     * Parser a enclosure image
+     * @param parser XMLPullParser
+     * @return The url of the image
+     */
     private String readEnclosure(XmlPullParser parser) {
         String type = parser.getAttributeValue(null, "type");
 
@@ -216,10 +272,21 @@ public class RSSParser {
         return null;
     }
 
+    /**
+     * Parse a thumbnail url
+     * @param parser XMLPullParser
+     * @return The url of the thumbnail
+     */
     private String readMediaThumbNail(XmlPullParser parser) {
         return parser.getAttributeValue(null, "url");
     }
 
+    /**
+     * Skip the whole current tag of the <code>parser</code>
+     * @param parser XMLPullParser
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
     private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
@@ -237,6 +304,13 @@ public class RSSParser {
         }
     }
 
+    /**
+     * Read a link from the <code>parser</code>
+     * @param parser XMLPullParser
+     * @return the url link
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private String readLink(XmlPullParser parser) throws IOException, XmlPullParserException {
         String link = "";
         parser.require(XmlPullParser.START_TAG, ns, RSSItem.LINK_TAG);
@@ -255,6 +329,13 @@ public class RSSParser {
         return link;
     }
 
+    /**
+     * Read the author from the {@link RSSItem#AUTHOR_TAG}
+     * @param parser XMLPullParser
+     * @return String the name of the author
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private String readAuthor(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, RSSItem.AUTHOR_TAG);
         String author = "";
@@ -274,6 +355,13 @@ public class RSSParser {
         return author;
     }
 
+    /**
+     * Read text between 2 tags, eg <test>text to get</test>
+     * @param parser XMLPullParser
+     * @return String
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
         String result = "";
         if (parser.next() == XmlPullParser.TEXT) {
@@ -283,6 +371,11 @@ public class RSSParser {
         return result;
     }
 
+    /**
+     * Get a InputStream from an url
+     * @param urlString String
+     * @return InputStream
+     */
     public InputStream readFromUrl(String urlString) {
         try {
             URL url = new URL(urlString);

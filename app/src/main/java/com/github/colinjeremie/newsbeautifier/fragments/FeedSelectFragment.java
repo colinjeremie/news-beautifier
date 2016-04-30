@@ -3,6 +3,7 @@ package com.github.colinjeremie.newsbeautifier.fragments;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -39,17 +40,61 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * Fragment to add or remove a {@link RSSFeed} from the {@link User} feed list
+ */
 public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
     public static final String FEEDS = "com.github.colinjeremie.newsbeautifier.fragments.FeedSelectFragment.FEEDS";
 
+    /**
+     * The number of columns used for the list display
+     */
+    private static final int NB_COLUMN_LIST_VIEW = 1;
+
+    /**
+     * The number of columns used for the grid display
+     */
+    private static final int NB_COLUMN_GRID_VIEW = 2;
+
+    /**
+     * The list of {@link RSSFeed} available
+     */
     private ArrayList<RSSFeed> mRssList = new ArrayList<>();
+
+    /**
+     * The adapter used to display the {@link #mRssList}
+     */
     private RssGridAdapter mRssGridAdapter;
+
+    /**
+     * The view used to add a personnalized {@link RSSFeed} to our list
+     */
     private TextInputLayout textInputLayout;
+
+    /**
+     * {@link AlertDialog} used to add dynamically a new {@link RSSFeed}
+     */
     private AlertDialog dialog;
+
+    /**
+     * The MenuItem used to change the display of the {@link #mRssList}
+     */
     private MenuItem mGridMenuItem;
+
+    /**
+     * The MenuItem used to change the display of the {@link #mRssList}
+     */
     private MenuItem mListMenuItem;
+
+    /**
+     * The view which displays the {@link #mRssList}
+     */
     private GridView mRssGridView;
+
+    /**
+     * Boolean to know if it's a tablet or not
+     */
     private boolean isTablet;
 
     public FeedSelectFragment() {
@@ -83,16 +128,22 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         return inflatedView;
     }
 
+    /**
+     * We save the {@link #mRssList} in the state to retrieve it after
+     *
+     * @param outState Bundle
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(FEEDS, mRssList);
         super.onSaveInstanceState(outState);
     }
 
-    public interface OnAddRssListener {
-        void onURLEntered(String url);
-    }
-
+    /**
+     * Create an {@link AlertDialog} to add a new {@link RSSFeed}
+     *
+     * @param listener Listener when the user clicked on the validate button
+     */
     private void createAddRssDialog(final OnAddRssListener listener){
         textInputLayout = (TextInputLayout) LayoutInflater.from(getActivity()).inflate(R.layout.add_rss_feed_dialog, null);
         final EditText editText = (EditText) textInputLayout.findViewById(R.id.edit_text);
@@ -134,6 +185,11 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         });
     }
 
+    /**
+     * Create the alert dialog to add a new {@link RSSFeed}
+     * We check the validity of the url when user validates the url
+     * If it's ok we add the feed to the {@link User#feeds}
+     */
     private void createNewFeed() {
         createAddRssDialog(new OnAddRssListener() {
             @Override
@@ -182,6 +238,12 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         });
     }
 
+    /**
+     * Check if the feed that we want to add doesn't already exist
+     *
+     * @param feed The {@link RSSFeed} to add
+     * @return true if the feed can be added to the {@link #mRssList}
+     */
     private boolean isFeedIsntAlreadyAdded(RSSFeed feed) {
         for (RSSFeed tmp : mRssList){
             if (tmp.getUrl().equals(feed.getUrl()) ||
@@ -192,6 +254,12 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         return true;
     }
 
+    /**
+     * Sort the feeds according to the <code>comparator</code>
+     * We call an {@link AsyncTask} to do the work
+     *
+     * @param comparator the comparator used
+     */
     private void sortFeeds(final Comparator<RSSFeed> comparator){
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -210,6 +278,12 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         }.execute();
     }
 
+    /**
+     * We keep the references of the grid and list {@link MenuItem}
+     * We hide them in tablet mode
+     *
+     * @param menu Menu
+     */
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -246,7 +320,12 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
         return false;
     }
 
-    public void showOverFlowMenu(int id) {
+    /**
+     * Creation of an overflow menu with the <code>id</code>
+     *
+     * @param id int
+     */
+    public void showOverFlowMenu(@IdRes  int id) {
         View view = this.getActivity().findViewById(id);
         if (view != null) {
             PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -263,20 +342,27 @@ public class FeedSelectFragment extends Fragment implements PopupMenu.OnMenuItem
             showOverFlowMenu(item.getItemId());
             return true;
         } else if (item.getItemId() == R.id.display_grid_action){
-            mRssGridView.setNumColumns(2);
+            mRssGridView.setNumColumns(NB_COLUMN_GRID_VIEW);
             mGridMenuItem.setVisible(false);
             mListMenuItem.setVisible(true);
             mRssGridAdapter.setMode(RssGridAdapter.MODE_GRID);
             mRssGridAdapter.notifyDataSetInvalidated();
             return true;
         } else if (item.getItemId() == R.id.display_list_action){
-            mRssGridView.setNumColumns(1);
+            mRssGridView.setNumColumns(NB_COLUMN_LIST_VIEW);
             mGridMenuItem.setVisible(true);
             mListMenuItem.setVisible(false);
             mRssGridAdapter.setMode(RssGridAdapter.MODE_LIST);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Listener when a feed has been validated and added to our list
+     */
+    public interface OnAddRssListener {
+        void onURLEntered(String url);
     }
 }
 

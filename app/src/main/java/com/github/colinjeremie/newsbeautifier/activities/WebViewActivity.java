@@ -1,5 +1,6 @@
 package com.github.colinjeremie.newsbeautifier.activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -11,11 +12,22 @@ import android.widget.ProgressBar;
 
 import com.github.colinjeremie.newsbeautifier.R;
 
+/**
+ * An activity embedded a {@link WebView}
+ */
 public class WebViewActivity extends AppCompatActivity {
 
-    public static String TITLE = "TITLE";
-    public static String URL = "URL";
+    /**
+     * The activity title
+     */
+    public static String TITLE = "com.github.colinjeremie.newsbeautifier.activities.TITLE";
 
+    /**
+     * The url to load
+     */
+    public static String URL = "com.github.colinjeremie.newsbeautifier.activities.URL";
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,25 +36,37 @@ public class WebViewActivity extends AppCompatActivity {
         setProgressBarVisibility(true);
 
         String title = getIntent().getStringExtra(TITLE);
-        if (title != null && !title.isEmpty()){
+        if (title != null && !title.isEmpty()) {
             setTitle(title);
         }
 
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
         WebView webview = (WebView) findViewById(R.id.web_view);
 
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                progressBar.setProgress(progress);
-                if (progress == 100) {
-                    progressBar.setVisibility(View.GONE);
-                }
+        if (webview != null) {
+            if (webview.getSettings() != null) {
+                webview.getSettings().setJavaScriptEnabled(true);
             }
-        });
-        webview.loadUrl(getIntent().getStringExtra(URL));
+            webview.setWebChromeClient(new WebChromeClient() {
+                public void onProgressChanged(WebView view, int progress) {
+                    if (progressBar != null) {
+                        progressBar.setProgress(progress);
+                        if (progress == 100) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+            webview.loadUrl(getIntent().getStringExtra(URL));
+        }
     }
 
+    /**
+     * Display the back button navigation
+     *
+     * @param menu Menu
+     * @return boolean
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getSupportActionBar() != null){
@@ -51,6 +75,12 @@ public class WebViewActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Bind the back button
+     *
+     * @param item MenuItem
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){

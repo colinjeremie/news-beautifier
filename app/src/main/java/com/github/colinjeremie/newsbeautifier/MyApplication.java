@@ -9,7 +9,9 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import java.util.ArrayList;
 
 /**
- * * NewsBeautifier
+ * Basic Application class
+ * Init the ORM DbFlow and user feeds
+ *
  * Created by jerem_000 on 2/15/2016.
  */
 public class MyApplication extends Application {

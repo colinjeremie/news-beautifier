@@ -6,11 +6,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * * NewsBeautifier
+ * Helper related to {@link com.github.colinjeremie.newsbeautifier.models.RSSItem}
+ *
  * Created by jerem_000 on 2/27/2016.
  */
 public class RSSItemHelper {
 
+    /**
+     * Parse the <code>xml</code> and return the url of a img tag if it exists
+     *
+     * @param xml a xml representation in the {@link String} format
+     * @return the url of the first img valid tag found
+     */
     static public String getUrlImgFromXmlString(String xml){
         Document doc = Jsoup.parse(xml);
         Elements imgs = doc.select("img");
@@ -26,6 +33,12 @@ public class RSSItemHelper {
         return null;
     }
 
+    /**
+     * Check if the <code>fileName</code> is an image extension
+     *
+     * @param fileName String
+     * @return true if it has an extension img
+     */
     static public boolean hasAImgExtension(String fileName){
         String[] ext = new String[]{"png", "bmp", "jpg", "jpeg"};
 

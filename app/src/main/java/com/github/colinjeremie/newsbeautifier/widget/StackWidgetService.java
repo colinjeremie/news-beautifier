@@ -1,6 +1,5 @@
 package com.github.colinjeremie.newsbeautifier.widget;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,27 +21,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * * NewsBeautifier
+ * Service used to manage the different views of the Stack widget
  * Created by jerem_000 on 3/1/2016.
  */
 public class StackWidgetService extends RemoteViewsService {
+
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new StackRemoteViewsFactory(this.getApplicationContext(), intent);
+        return new StackRemoteViewsFactory(this.getApplicationContext());
     }
 
+    /**
+     * Factory to create the views of the widget based on the data {@link StackRemoteViewsFactory#mWidgetItems
+     */
     public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         private int mCount = 10;
         private List<RSSItem> mWidgetItems = new ArrayList<>();
         private Context mContext;
-        private int mAppWidgetId;
 
-        public StackRemoteViewsFactory(Context context, Intent intent) {
+        public StackRemoteViewsFactory(Context context) {
             mContext = context;
-            mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
+        /**
+         * On the creation we fetched our data from the {@link MyApplication}
+         * We take the last articles with pictures, the limit is {@link #mCount}
+         */
         public void onCreate() {
             mWidgetItems = ((MyApplication) mContext.getApplicationContext()).mUser.getLastArticlesWithPicture(mCount);
             mCount = mWidgetItems.size();
@@ -63,6 +68,13 @@ public class StackWidgetService extends RemoteViewsService {
             return mCount;
         }
 
+        /**
+         * Create the view for an article
+         * We set an fill intent {@link Intent} for each {@link RSSItem} when an item is clicked
+         *
+         * @param position int
+         * @return the article's view
+         */
         @Override
         public RemoteViews getViewAt(int position) {
             RSSItem model = mWidgetItems.get(position);
@@ -87,6 +99,12 @@ public class StackWidgetService extends RemoteViewsService {
             return rv;
         }
 
+        /**
+         * Download and transform the image pointed by <code>url</code>
+         *
+         * @param url String the url of the image to download
+         * @return the {@link Bitmap} created
+         */
         private Bitmap getImageBitmap(String url) {
             try {
                 URL aURL = new URL(url);

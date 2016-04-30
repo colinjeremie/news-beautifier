@@ -3,6 +3,7 @@ package com.github.colinjeremie.newsbeautifier.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
@@ -17,21 +18,54 @@ import com.github.colinjeremie.newsbeautifier.models.RSSFeed;
 import com.github.colinjeremie.newsbeautifier.models.User;
 import com.github.colinjeremie.newsbeautifier.utils.OnMyFeedsChanged;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 /**
- ** NewsBeautifier
- * Created by james_000 on 2/16/2016.
+ * Adapter used in {@link com.github.colinjeremie.newsbeautifier.fragments.FeedSelectFragment}
  */
 public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
 
-    public static int MODE_LIST = 1;
-    public static int MODE_GRID = 2;
+    /**
+     * The mode of the display
+     */
+    @IntDef({MODE_LIST, MODE_GRID})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DisplayMode {}
 
+    /**
+     * If there is a list view
+     */
+    public static final int MODE_LIST = 1;
+
+    /**
+     * If there is a grid view
+     */
+    public static final int MODE_GRID = 2;
+
+    /**
+     * The current mode
+     */
     private Integer mMode = MODE_LIST;
+
+    /**
+     * The user of the app
+     */
     private User mUser;
+
+    /**
+     * The activity associated with the Adapter
+     */
     private Activity mActivity;
 
+
+    /**
+     * Constructor
+     *
+     * @param activity Activity
+     * @param rssList The data used
+     */
     public RssGridAdapter(Activity activity, List<RSSFeed> rssList){
         super(activity, R.layout.list_feed_item, rssList);
 
@@ -90,6 +124,12 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         return convertView;
     }
 
+    /**
+     * Tint the <code>textView</code> with the color res id <code>colorRes</code>
+     *
+     * @param textView the view to set the tint
+     * @param colorRes the color res id used to tint
+     */
     private void tintActionTextView(TextView textView, int colorRes) {
         textView.setTextColor(ContextCompat.getColor(textView.getContext(), colorRes));
         for (Drawable tmp : textView.getCompoundDrawables()){
@@ -100,21 +140,43 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         textView.requestLayout();
     }
 
+    /**
+     * View holder
+     */
     private static class ViewHolder {
         public int pos;
         public TextView feedTitle;
         public TextView feedDescription;
         public TextView actionTextView;
         public TextView countArticles;
-        public Integer mode = MODE_LIST;
+        public @DisplayMode int mode = MODE_LIST;
     }
 
+    /**
+     * Click listener on an item
+     */
     private class OnRssFeedClick implements View.OnClickListener {
+
+        /**
+         * The ViewHolder of the item
+         */
         private ViewHolder mViewHolder;
+
+        /**
+         * Constructor
+         *
+         * @param viewHolder ViewHolder
+         */
         public OnRssFeedClick(ViewHolder viewHolder){
             mViewHolder = viewHolder;
         }
 
+        /**
+         * Add or remove the feed from the {@link User} feed list
+         * We tint the {@link ViewHolder#actionTextView} to the right color depending if it's a user's feed or not
+         *
+         * @param v View
+         */
         @Override
         public void onClick(View v) {
             RSSFeed feed = getItem(mViewHolder.pos);
@@ -139,7 +201,11 @@ public class RssGridAdapter extends ArrayAdapter<RSSFeed> {
         }
     }
 
-    public void setMode(Integer pMode) {
+    /**
+     * Mode List or Grid
+     * @param pMode int
+     */
+    public void setMode(@DisplayMode int pMode) {
         mMode = pMode;
     }
 }
