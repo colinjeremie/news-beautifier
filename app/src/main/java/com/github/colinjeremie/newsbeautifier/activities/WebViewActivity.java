@@ -27,6 +27,11 @@ public class WebViewActivity extends AppCompatActivity {
      */
     public static String URL = "com.github.colinjeremie.newsbeautifier.activities.URL";
 
+    /**
+     * The webview used
+     */
+    private WebView mWebview;
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +46,11 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
-        WebView webview = (WebView) findViewById(R.id.web_view);
+        mWebview = (WebView) findViewById(R.id.web_view);
 
-        if (webview != null) {
-            if (webview.getSettings() != null) {
-                webview.getSettings().setJavaScriptEnabled(true);
-            }
-            webview.setWebChromeClient(new WebChromeClient() {
+        if (mWebview != null) {
+            mWebview.getSettings().setJavaScriptEnabled(false);
+            mWebview.setWebChromeClient(new WebChromeClient() {
                 public void onProgressChanged(WebView view, int progress) {
                     if (progressBar != null) {
                         progressBar.setProgress(progress);
@@ -57,7 +60,7 @@ public class WebViewActivity extends AppCompatActivity {
                     }
                 }
             });
-            webview.loadUrl(getIntent().getStringExtra(URL));
+            mWebview.loadUrl(getIntent().getStringExtra(URL));
         }
     }
 
@@ -88,5 +91,17 @@ public class WebViewActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Navigate through the webview
+     */
+    @Override
+    public void onBackPressed() {
+        if (mWebview.canGoBack()){
+            mWebview.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

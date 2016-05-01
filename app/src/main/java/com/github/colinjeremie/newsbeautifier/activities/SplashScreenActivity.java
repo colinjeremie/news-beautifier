@@ -26,7 +26,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     /**
      * Delay time to keep the activity alive in ms
      */
-    private static final long DELAY_TIME = 2000;
+    public static final long DELAY_TIME = 2000;
 
     /**
      * Init the blogs and articles from {@link RSSParser#RSS_FEEDS }

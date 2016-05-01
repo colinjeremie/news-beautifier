@@ -20,6 +20,7 @@
   **[] $VALUES;
   public *;
 }
+-keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
 
 -keep class com.github.colinjeremie.newsbeautifier.models.** { *; }
 -keep class com.raizlabs.android.dbflow.** { *; }

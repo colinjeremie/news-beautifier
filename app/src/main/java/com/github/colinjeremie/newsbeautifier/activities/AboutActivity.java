@@ -44,7 +44,7 @@ public class AboutActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private String getVersionName() {
+    public String getVersionName() {
         return "v" + BuildConfig.VERSION_NAME + "-r" + BuildConfig.VERSION_CODE;
     }
 }
