@@ -1,6 +1,6 @@
 ## Synopsis
 
-NewsBeautifier is an app who allows you to follow your favorite news.
+NewsBeautifier is an app that allows you to follow your favorite news.
 Built into material design you can subscribe or unsubscribe to existing RSS feeds or you can add your own ones.
 A Stack widget has been created for a quick preview of your latest articles
 
